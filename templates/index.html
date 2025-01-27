@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fire Detection System</title>
+    <!-- بارگذاری محلی فایل CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #2b2b2b;
+            color: #ffffff;
+        }
+        .navbar {
+            background-color: #1e1e1e;
+            padding: 10px;
+        }
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+        }
+        .navbar-brand img {
+            width: 150px;
+            height: 50px;
+            object-fit: contain;
+            margin-right: 10px;
+        }
+        .card {
+            background-color: #3b3b3b;
+            border: none;
+        }
+        .log-area {
+            background-color: #1e1e1e;
+            color: #00ff00;
+            font-family: Consolas, monospace;
+            padding: 10px;
+            border: 1px solid #5c5c5c;
+            overflow-y: scroll;
+            height: 300px;
+        }
+        .video-container {
+            background-color: black;
+            border: 2px solid #5c5c5c;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="/static/logo.jpg" alt="Logo">
+                <span>Fire Detection System</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="video-container">
+                    <img id="videoFeed" src="/video_feed" alt="Video Stream" class="img-fluid">
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Detection Logs</h5>
+                        <div class="log-area" id="logArea"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- بارگذاری محلی Socket.IO -->
+    <script src="/static/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+
+        // Listen for log messages from the server
+        socket.on('log', (data) => {
+            const logArea = document.getElementById('logArea');
+            const newLog = document.createElement('p');
+            newLog.textContent = `[${data.time}] ${data.message}`;
+            logArea.appendChild(newLog);
+            logArea.scrollTop = logArea.scrollHeight; // Auto-scroll to the latest log
+        });
+
+        // Confirm connection
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+    </script>
+</body>
+</html>
